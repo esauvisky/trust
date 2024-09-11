@@ -1,0 +1,9 @@
+url,lat,lon,distance,name,country,cc,sponsor,id,preferred,https_functional,host
+https://speedtest.popnetfibra.com.br:8080/speedtest/upload.php,-7.4848,-36.6622,2818,Serra Branca,Brazil,BR,POPNET FIBRA,52974,0,1,speedtest.popnetfibra.com.br:8080
+http://speedserver-rpt.itop.net.br:8080/speedtest/upload.php,-21.1783,-47.8067,1635,Ribeirão Preto,Brazil,BR,ITOP TELECOM LTDA,56426,0,1,speedserver-rpt.itop.net.br.prod.hosts.ooklaserver.net:8080
+http://speedtest-lon.veloxserv.net:8080/speedtest/upload.php,51.5171,-0.1062,7262,London,United Kingdom,GB,VeloxServ Communications,37536,0,1,speedtest-lon.veloxserv.net.prod.hosts.ooklaserver.net:8080
+https://speedtest.redrawinternet.com:8080/speedtest/upload.php,51.5171,-0.1062,7262,London,United Kingdom,GB,Redraw Internet,7352,0,1,speedtest.redrawinternet.com:8080
+http://jp-nperf.verizon.net:8080/speedtest/upload.php,35.6833,139.6833,10723,Tokyo,Japan,JP,Verizon,50467,0,1,jp-nperf.verizon.net.prod.hosts.ooklaserver.net:8080
+http://tyo.speedtest.contabo.net:8080/speedtest/upload.php,35.6833,139.6833,10723,Tokyo,Japan,JP,Contabo,56935,0,1,tyo.speedtest.contabo.net:8080
+http://gigtest.drtel.net:8080/speedtest/upload.php,46.0031,-98.5231,5765,"Ellendale ND",United States,US,Dickey Rural Network,50658,0,1,gigtest.drtel.net.prod.hosts.ooklaserver.net:8080
+https://speedtest.inoc.net:8080/speedtest/upload.php,42.6525,-73.7572,5268,"Albany NY",United States,US,INOC Data Centers,11526,0,1,speedtest.inoc.net:8080
