@@ -6,7 +6,7 @@ OUTPUT_CSV="selected_servers.csv"
 LOG_FILE="server_check_log.txt"
 
 # List of major countries (add or modify as needed)
-MAJOR_COUNTRIES=("US") # "GB" "JP" "BR")
+MAJOR_COUNTRIES=("US" "GB" "JP" "BR")
 
 # Temporary files to store shuffled and filtered servers
 SHUFFLED_FILE=$(mktemp)
