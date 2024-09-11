@@ -1,46 +1,59 @@
 #!/bin/bash
 
-# Directory to store log files
-LOG_DIR="$HOME/speedtest_logs"
-mkdir -p "$LOG_DIR"
+# Input CSV file containing selected servers
+SERVER_CSV="selected_servers.csv"
+# Output CSV file to store speed test results
+RESULT_CSV="speedtest_results.csv"
 
-# Log file path
-LOG_FILE="$LOG_DIR/global_speedtest_$(date '+%Y-%m-%d').csv"
+# Create the output CSV header
+echo "Timestamp,Server Name,Country,Download (Mbps),Upload (Mbps),Ping (ms)" > "$RESULT_CSV"
 
-# Create CSV header if file doesn't exist
-if [ ! -f "$LOG_FILE" ]; then
-    echo "Timestamp,Server Name,Server Country,Download (Mbps),Upload (Mbps),Ping (ms)" >> "$LOG_FILE"
-fi
+# Function to perform speed test and log results
+run_speed_test() {
+    local url="$1"
+    local server_name="$2"
+    local country="$3"
 
-# List of country codes for global testing (add more as needed)
-COUNTRIES=("US" "GB" "JP" "AU" "DE" "FR" "BR" "ZA" "IN" "CN")
+    echo "Testing server: $server_name ($country) - $url"
 
-# Perform speed tests
-while true; do
-    TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+    # Run speed test
+    RESULT=$(./speedtest --server-id "$url" --format=json)
 
-    # Choose a random country
-    COUNTRY=${COUNTRIES[$RANDOM % ${#COUNTRIES[@]}]}
-
-    # Get a list of servers in the selected country
-    SERVERS=$(./speedtest --servers | grep $COUNTRY | awk '{print $1}')
-
-    # Select a random server from the list
-    SERVER=$(echo "$SERVERS" | shuf -n 1)
-
-    # Run speed test using the selected server
-    RESULT=$(./speedtest --server-id $SERVER --format=json)
-    
     # Extract results
-    SERVER_NAME=$(echo "$RESULT" | jq -r '.server.name')
-    SERVER_COUNTRY=$(echo "$RESULT" | jq -r '.server.location.country')
+    TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
     DOWNLOAD=$(echo "$RESULT" | jq -r '.download.bandwidth' | awk '{print $1/125000}')  # Convert to Mbps
     UPLOAD=$(echo "$RESULT" | jq -r '.upload.bandwidth' | awk '{print $1/125000}')    # Convert to Mbps
     PING=$(echo "$RESULT" | jq -r '.ping.latency')
 
-    # Append results to CSV
-    echo "$TIMESTAMP,$SERVER_NAME,$SERVER_COUNTRY,$DOWNLOAD,$UPLOAD,$PING" >> "$LOG_FILE"
+    # Log results to CSV
+    echo "$TIMESTAMP,$server_name,$country,$DOWNLOAD,$UPLOAD,$PING" >> "$RESULT_CSV"
+}
 
-    # Wait for 15 minutes before the next test (adjust as needed)
-    # sleep 900
-done
+# Read selected servers from CSV and perform tests
+echo "Reading selected servers from $SERVER_CSV..."
+while IFS=, read -r url lat lon distance name country cc sponsor id preferred https_functional host; do
+    # Skip the header
+    if [[ "$url" == "url" ]]; then
+        continue
+    fi
+
+    # Run speed test for each server
+    run_speed_test "$id" "$name" "$country"
+done < "$SERVER_CSV"
+
+# Calculate and display statistics
+echo "Calculating statistics..."
+awk -F, '
+    BEGIN { download_total = 0; upload_total = 0; ping_total = 0; count = 0 }
+    NR > 1 {
+        download_total += $4;
+        upload_total += $5;
+        ping_total += $6;
+        count++;
+    }
+    END {
+        print "Average Download Speed (Mbps):", (count > 0 ? download_total / count : 0);
+        print "Average Upload Speed (Mbps):", (count > 0 ? upload_total / count : 0);
+        print "Average Ping (ms):", (count > 0 ? ping_total / count : 0);
+    }
+' "$RESULT_CSV"
